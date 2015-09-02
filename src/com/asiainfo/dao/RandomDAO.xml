@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.RandomDAO">
+
+	<select id="querySendMsRandom" parameterType="string" resultType="string">
+		SELECT random_no FROM random_code WHERE
+			active_code=#{code} AND  status=0 ORDER BY create_time desc limit 1
+	</select>
+
+
+	<insert id="insertRandomCode" parameterType="map">
+		insert into random_code
+        	(random_type,
+		     create_time,
+ 			 random_no,
+			 user_id,
+			 status,
+			 active_code,
+			 send_code)
+    	values
+        	(#{random_type}, #{create_time}, #{random_no},
+        	#{user_id}, #{status},#{activeCode},#{sendCode})
+  	</insert>
+
+	<update id="updateRandomNo" parameterType="map">
+		UPDATE random_code set status=#{randomStatus} where
+		send_code=#{sendCode} and status=0
+	</update>
+
+    <select id="queryRandomNo" parameterType="map" resultType="int">
+			select count(1) from random_code where
+			random_no=#{random_no} and status=0 and send_code=#{sendCode}
+	</select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.MqMessageDAO">
+
+	<insert id="saveReturnMessage" parameterType="map">
+			INSERT INTO tb_mq_message(mq_message,mq_type) VALUES
+				(#{mqMessage},#{mqType})
+	</insert>
+
+
+
+	<insert id="saveWebServiceLog" parameterType="map">
+		INSERT INTO insert_webservice_log(active_code,create_time) VALUE (#{active_code},#{create_time});
+	</insert>
+
+	<select id="queryWebServiceCodeName" resultType="string" parameterType="map">
+		SELECT BUSI_NAME FROM mktsrv_global_data WHERE
+		BUSI_CODE=#{bus_code} and code_type=#{code_type} LIMIT 1
+	</select>
+
+</mapper>

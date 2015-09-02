@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.LabelDAO">
+	<!--  
+    <resultMap type="com.asiainfo.bean.LabelAll" id="labelAll">
+       <result property="columnName"     column="table_col" />
+       <result property="dataType"     column="col_desc" />
+       <result property="type"  	  column="col_type" />
+       <result property="operator"  column="operator" />
+    </resultMap>
+    -->   
+	<select id="selectLabel"  resultType="map">
+		select type, group_concat(column_name separator <![CDATA["&"]]>) label from label group by type  
+	</select>
+	
+</mapper>

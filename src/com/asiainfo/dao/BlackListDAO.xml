@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asiainfo.dao.BlackListDAO">
+	
+	<insert id="insertUserToBlackList"  parameterType="map" >
+		insert into especial_list
+        	(phone_no,descinfo,type)
+    	values
+        	(#{phoneNumber},#{descinfo},#{type})
+  	</insert>
+  	
+  	<select id="showBlackList" parameterType="map" resultType="map">
+		SELECT * FROM especial_list  
+		<if test="phoneNumber != null and phoneNumber !='' ">
+			WHERE phone_no=#{phoneNumber} 
+		</if>
+		LIMIT #{beginNum},#{endNum}
+	</select>
+	
+	<select id="queryBlackListCount" parameterType="map" resultType="map">
+		SELECT count(1) pageCount FROM especial_list  
+		<if test="phoneNumber != null and phoneNumber !='' ">
+			WHERE phone_no=#{phoneNumber} 
+		</if>
+		
+	</select>
+
+	<select id="queryBlackList" parameterType="String" resultType="map">
+		SELECT * FROM especial_list 
+	</select>
+	
+	<delete id="deleteUserFromBlackList" parameterType="String" >
+		DELETE FROM black_list WHERE phone_no=#{phoneNumber} 	
+	</delete>
+</mapper>

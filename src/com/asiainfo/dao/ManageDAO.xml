@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.ManageDAO">
+	<select id="getProductCode" resultType="map">
+		SELECT * FROM product_info WHERE status=0
+	</select>
+
+	<insert id="addProductInfo" parameterType="map">
+			insert into effect_product_code (type_name,product_name,price_code,busi_code,product_code)
+		   		values
+			(#{bigName},#{proNmae},#{priceCode},#{busCode},#{proCode})
+
+	</insert>
+
+	<update id="updateProductInfo" parameterType="map">
+		UPDATE product_info SET status=1,
+								create_time=#{createTime},
+								create_user=#{createUser}
+		WHERE pro_seq=#{proSeq}
+	</update>
+
+	<update id="updateCityCount" parameterType="map">
+		update	city_sendms_scale set send_count=#{sendCount}
+		where cid=#{scaleId}
+
+	</update>
+
+	<select id="getSendCityNum" resultType="map">
+		SELECT b.city_name,a.* FROM city_sendms_scale a LEFT JOIN vgop_city_info b ON a.city_id=b.city_id WHERE a.status=1
+	</select>
+</mapper>

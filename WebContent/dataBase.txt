@@ -1,0 +1,30 @@
+create table tb_sequence(
+name varchar(50) not null,
+current_value int not null,
+_increment int not null default 1,
+primary key(name));
+
+insert into tb_sequence values('activeid',0,1);
+
+create function _nextval(n varchar(50)) returns integer
+begin
+declare _cur int;
+set _cur=(select current_value from tb_sequence where name= n);
+update tb_sequence set current_value = _cur + _increment where name=n ;
+return _cur;
+end;
+
+--linux下创建函数     定义分隔符，必须要有，可以不是$$
+DELIMITER $$
+create function _nextval(n varchar(50)) returns integer
+begin
+declare _cur int;
+set _cur=(select current_value from tb_sequence where name= n);
+update tb_sequence set current_value = _cur + _increment where name=n ;
+return _cur;
+END $$
+DELIMITER $$
+-- 注意看清楚了，这个end后面有你在前面定义的分割符号
+-- 好，这里结束。
+
+select _nextval('activeid');

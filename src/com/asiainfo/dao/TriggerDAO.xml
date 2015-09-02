@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.TriggerDAO">
+
+	<select id="searchBsType" parameterType="map" resultType="string">
+		SELECT bs_type FROM position_info
+		<if test="cityName != '' ">
+			where (city_name=#{cityName} OR county_name=#{cityName})
+		</if>
+		 GROUP BY bs_type
+	</select>
+
+	<delete id="deleteTriggerBsInfo" parameterType="map">
+		delete from trigger_info where active_code=#{activeCode}
+								   and trigger_code in
+								   			(select concat(lac_id,'-',ci_id) lacid from position_info where (city_name=#{bcityName} or county_name=#{bcityName}) and bs_type = #{bbsType} )
+	</delete>
+
+	<select id="queryAppMessageList" parameterType="map" resultType="map">
+		select group_concat(app_name,",",imgurl,",",app_code separator <![CDATA["&"]]>) app , ucode from
+		 app_info GROUP BY ucode ORDER BY ucode
+	</select>
+
+	<insert id="insertCheckedApps" parameterType="list">
+		 insert into trigger_info (active_code,trigger_type,trigger_ms,status,use_id,trigger_code)
+		    values
+		    <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		         (
+			         #{item.activeCode},
+			         #{item.trigger_type},
+			         #{item.checked},
+			         1,
+			         #{item.userId},
+			         #{item.trigger_code}
+		         )
+		    </foreach>
+	</insert>
+
+	<insert id="insertCheckedPosition" parameterType="map">
+		insert into trigger_info (active_code,trigger_type,trigger_ms,status,use_id,trigger_code)
+			select #{activeCode},#{trigger_type},bs_name,1,#{userId},concat(lac_id,'-',ci_id)
+			 from position_info where 1=1
+			 <if test="cityName != 1 ">
+			 	and	(city_name=#{cityName} or county_name=#{cityName})
+			</if>
+			and bs_type in (${checked})
+	</insert>
+
+	<insert id="insertCheckedPositionType" parameterType="list">
+		insert into trigger_info (active_code,trigger_type,trigger_ms,status,use_id)
+		    values
+		    <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		         (
+			         #{item.activeCode},
+			         0,
+			         #{item.bs_type},
+			         1,
+			         #{item.userId}
+		         )
+		    </foreach>
+	</insert>
+
+
+	<select id="queryCheckedAppList" parameterType="map" resultType="map">
+		SELECT concat(a.trigger_ms,',',b.imgurl) appms from
+		(select trigger_ms,trigger_code from trigger_info where
+				trigger_type=2 and active_code=#{activeCode}
+				and status=1 GROUP BY trigger_ms,trigger_code
+				order by create_time desc) a LEFT JOIN app_info b ON(a.trigger_code=b.app_code)
+	</select>
+
+	<select id="queryCityList" resultType="map">
+		SELECT city_name,county_name from
+			position_info GROUP BY city_name,county_name
+				ORDER BY city_name,county_name
+	</select>
+
+	<select id="queryCityPositionList" parameterType="map" resultType="map">
+		SELECT bs_name from position_info where 1=1
+		<if test="city_name != null and city_name !='' ">
+		  and (city_name=#{city_name} or county_name=#{city_name})
+		</if>
+		<if test="bs_type != null and bs_type !='' ">
+			AND bs_type=?
+		</if>
+		group by bs_name
+		ORDER BY bs_name
+	</select>
+
+	<select id="queryCheckedPosition" parameterType="map" resultType="map">
+		select group_concat(trigger_ms separator <![CDATA["&"]]>) bsms from
+			(SELECT trigger_ms FROM trigger_info WHERE trigger_type=0 AND STATUS=1
+			and active_code=#{activeCode} GROUP BY trigger_ms ORDER BY trigger_ms) a
+	</select>
+
+	<update id="deleteTriggerMs" parameterType="map">
+		update trigger_info set status=9,create_time=#{createTime}
+			where active_code=#{activeCode} and trigger_ms=#{triggerName} and trigger_type=#{triggerType} and status=1
+	</update>
+
+	<update id="deleteUserGroup" parameterType="map">
+		UPDATE user_group_info SET STATUS=9 ,create_time=#{createTime}
+		where active_code=#{activeCode} and group_name=#{triggerName} and STATUS=1 AND group_type=#{triggerType}
+	</update>
+
+	<update id="deleteSendMs" parameterType="map">
+		update send_message SET STATUS=9,create_time=#{createTime} WHERE
+		active_code=#{activeCode} and send_type=#{triggerName} AND STATUS=2
+	</update>
+
+	<select id="queryTriggerInfoMs" parameterType="string" resultType="map">
+		SELECT a.trigger_type,group_concat(a.trigger_ms separator ",") trigger_ms
+			from (select trigger_ms,trigger_type FROM trigger_info where
+				  	active_code=#{activeCode}
+				  	and trigger_type<![CDATA[<>]]>0
+				  	and status=1
+				  	GROUP BY trigger_ms,trigger_type) a
+			GROUP BY a.trigger_type order by trigger_type
+  	</select>
+
+
+	<select id="queryAppList" resultType="map">
+		select u_name apptitle,ucode apptypeid from app_info where ucode<![CDATA[<>]]>-9 GROUP BY u_name,ucode
+	</select>
+
+	<select id="getTypeAppList" resultType="map" parameterType="string">
+		select CONCAT(app_code,",",app_name,",",imgurl) appinfo,app_type FROM app_info where app_type in(1,0) and ucode=#{typeid}
+		and ucode<![CDATA[<>]]>-9
+	</select>
+
+	<insert id="insertBsTrigger" parameterType="string">
+		INSERT INTO trigger_info
+			select #{activeCode},'3',CONCAT(city_name,",",COUNTY_NAME),1,null,NOW(),CONCAT(lac_id,"-",ci_id)
+			from position_info
+
+	</insert>
+	
+	<select id="getCheckedAppCount" parameterType="map" resultType="int">
+		select count(DISTINCT trigger_code) cout from trigger_info WHERE trigger_type= #{triggerType}
+		 					AND status=1
+		 					AND active_code=#{activeCode}
+	</select>
+
+</mapper>

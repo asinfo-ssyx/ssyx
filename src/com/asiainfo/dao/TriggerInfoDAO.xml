@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.TriggerInfoDAO">
+
+    <resultMap type="com.asiainfo.bean.TriggerInfo" id="triggerInfo">
+       <result property="activeCode"      column="active_code" />
+       <result property="triggerType"     column="trigger_type" />
+       <result property="triggerMs"  	  column="trigger_ms" />
+       <result property="status"          column="status" />
+       <result property="useId"           column="use_id" />
+       <result property="createTime"      column="create_time" />
+    </resultMap>
+	<select id="selectTriggerById" parameterType="String" resultMap="triggerInfo">
+		select trigger_ms
+		  from trigger_info
+		 where active_code = #{activeCode} and trigger_type=1 group by trigger_ms
+	</select>
+	<insert id="insertTrigger" parameterType="Trigger">
+    	insert into trigger_info
+        	(active_code, trigger_type, trigger_ms, status, use_id, create_time,trigger_code)
+    	values
+        	(#{activeCode}, #{triggerType}, #{triggerMs}, 1, #{useId}, #{createTime},#{searchType})
+  	</insert>
+  	<update id="updateTrigger" parameterType="Trigger">
+  		update trigger_info set trigger_ms = #{triggerMs}
+  		 where active_code = #{activeCode} and trigger_type = #{triggerType}
+  	</update>
+  	<delete id="deleteTrigger" parameterType="String">
+  		delete from user_group_info where active_code = #{activeCode} and trigger_type = #{triggerType}
+  	</delete>
+
+
+
+</mapper>

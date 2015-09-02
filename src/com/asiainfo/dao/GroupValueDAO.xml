@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.GroupValueDAO">
+
+	<insert id="insertGroupValue" parameterType="list">
+		 insert into group_value (group_name, column_name, operator, value)
+		    values 
+		      <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		      ( #{item.group_name}, #{item.column_name}, #{item.operator},#{item.value})
+		      </foreach>
+	</insert>
+
+</mapper>

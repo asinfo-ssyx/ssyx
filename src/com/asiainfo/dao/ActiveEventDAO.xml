@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.ActiveEventDAO">
+
+	<select id="queryEventList" parameterType="string" resultType="map">
+		SELECT s_event_type,s_type_code
+					FROM active_event
+	  				where f_type_code=#{type}
+	  				GROUP BY s_event_type,s_type_code
+	  				ORDER BY s_type_code
+	</select>
+
+	<select id="queryEventNameList" parameterType="map" resultType="map">
+		SELECT event_no,
+			   event_name,
+			   event_desc,
+			   (case when e_cycle='1' then '日'
+					 when e_cycle='2' then '月'
+				else e_cycle end) cycle
+			FROM  active_event
+			where f_type_code=#{f_type} and s_type_code=#{s_type}
+
+	</select>
+
+	<select id="queryEventType" parameterType="map" resultType="int">
+		select count(1) from trigger_info where
+			active_code=#{activeCode} and trigger_type=4 and status=1
+	</select>
+
+	<insert id="insertEventType" parameterType="map">
+		insert into trigger_info (active_code,trigger_type,status,use_id,trigger_code,trigger_ms)
+		    values(#{activeCode},4,1,#{useId},#{eventCode},#{eventName})
+	</insert>
+
+	<select id="queryCheckedEventType" parameterType="string" resultType="string">
+		select CONCAT(trigger_code,'_',trigger_ms) einfo
+		from trigger_info where active_code=#{activeCode} and status=1 and trigger_type=4
+
+	</select>
+
+	<select id="queryUserGroup" parameterType="string" resultType="string">
+		select CONCAT(b.group_name,'#',b.table_name) ginfo FROM
+			active_event a LEFT JOIN user_group b ON a.group_id=b.group_id WHERE
+			a.event_no=#{code}
+	</select>
+
+	<delete id="deleteActiveEventTypeUserGroup" parameterType="map">
+		UPDATE user_group_info SET STATUS=9,create_time=#{createTime}
+		where active_code=#{activeCode}
+			  and STATUS=1
+			  AND group_type=1
+	</delete>
+
+	<select id="queryWebClassList" resultType="map">
+		select concat(cast(site_class_id as char),"") site_class_id,site_class_name FROM fo_web_site_class WHERE parent_id is null
+	</select>
+
+	<select id="queryWebListByCid" resultType="map" parameterType="string">
+		select b.site_id site_category_id,b.site_name webname FROM
+				fo_web_site_class a JOIN fo_web_site b ON a.site_class_id=b.site_class_id
+			WHERE a.parent_id =#{classId}
+	</select>
+
+	<insert id="insertCheckedWebs" parameterType="list">
+		insert into trigger_info (active_code,trigger_type,trigger_ms,status,use_id,trigger_code)
+		    values
+		    <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		         (
+			         #{item.activeCode},
+			         #{item.trigger_type},
+			         #{item.checked},
+			         1,
+			         #{item.userId},
+			         #{item.trigger_code}
+		         )
+		    </foreach>
+	</insert>
+
+	<select id="querySubTriggerMsListByType" parameterType="map" resultType="string">
+		SELECT group_concat(DISTINCT trigger_ms separator ",") tms
+		 from trigger_info WHERE trigger_type= #{triggerType}
+		 					AND status=1
+		 					AND active_code=#{activeCode}
+	</select>
+
+	<select id="getCheckedWebCount" parameterType="map" resultType="int">
+		select count(DISTINCT trigger_code) cout from trigger_info WHERE trigger_type= #{triggerType}
+		 					AND status=1
+		 					AND active_code=#{activeCode}
+	</select>
+
+</mapper>

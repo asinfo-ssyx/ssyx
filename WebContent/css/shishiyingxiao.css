@@ -1,0 +1,103 @@
+/* 营销服务平台-触发条件设置-关键词-上 */
+body{font-family:"微软雅黑";font-size:12px;color:#6f6f6f;;line-height:28px;background:#f6f6f6;}
+
+.shezhi_main_up{width:967px;height:178px;margin:0 auto;margin-top:20px;background:#FFFFFF;}
+.cftj_gjc{  float:left; width:276px;height:178px;border:1px solid #e2e2e2;border-right:none;margin:0;position:relative;}
+.xuanzhong_bar{width:283px;height:33px;position:absolute;top:0xp; left:0xp; z-index:9999;padding-left:20px;}
+.text1{width:100px;margin-left:50px;height:20px;margin-top:4px;}
+
+.gjc_tagsm { padding-top:15px;margin-left:50px;float:left;}
+.gjc_tagsm li{background:#FFFFFF;width:116px;height:25px;color:#6f6f6f; border:#dfdfdf solid 1px;list-style:none;margin-top:5px;text-align:center;line-height:26px;}
+
+.gjc_tag { padding-top:43px;margin-left:18px;float:left;}
+.gjc_tag li{background:#FFFFFF;width:116px;height:25px;color:#6f6f6f; border:#dfdfdf solid 1px;list-style:none;margin-top:5px;text-align:center;line-height:26px;}
+
+.gjc_tag2{ padding-top:43px;float:left;margin-left:5px;}
+.gjc_tag2 li{background:#FFFFFF;width:116px;height:25px;color:#6f6f6f;border:#dfdfdf solid 1px;list-style:none;margin-top:5px;text-align:center;line-height:26px;}
+
+.yhq{ float:left; width:270px;height:178px;border:1px solid #e2e2e2;border-right:none;margin:0;position:relative;}
+.weixuanzhong_bar{ float:right;width:278px;height:33px;position:absolute;top:0xp;left:0xp;z-index:9999;padding-left:20px;}
+.weixuanzhong_bar p{ padding-left:80px;}
+.yonghuqun_content{width:254px;height:124px;background:#eef8ff;text-align:center;margin-left:8px;margin-top:45px;}
+
+.tsqd{ float:left; background:url(../images/xuanzhong_bg1.png) no-repeat  bottom;width:270px;height:188px;}
+.weixuanzhong_bar2{ float:right;width:278px;height:33px;position:absolute;top:0xp;left:0xp;z-index:9999;padding-left:20px;}
+.weixuanzhong_bar2 p{ padding-left:65px;}
+
+
+.jsxj{float:left;width:147px;height:178px;border:1px solid #e2e2e2;margin:0;position:relative;}
+.jieshuxinjian_bar{float:right;width:147px;height:33px;position:absolute;top:0xp;left:0xp;z-index:9999;padding-left:10px;}
+.jieshuxinjian_bar p{ padding-left:50px;}
+.jieshuxinjian_content{width:254px;height:124px;text-align:center;margin-top:45px;margin-left:-50px;}
+
+
+
+/* 营销服务平台-触发条件设置-关键词-下 左 */
+.shezhi_main_down{width:970px;height:288px;margin:0 auto;margin-top:30px;background:#FFFFFF;}
+.down_left{ width:707px;height:288px;border:1px solid #e2e2e2;float:left;}
+.down_left_top{width:699px;height:33px;padding-left:10px;}
+.text2{width:170px;border:1px solid #e2e2e2;}
+
+.main_right{float:right;}
+.biaoqiankuang{width:400px;height:190px;background:#eef8ff;margin-right:20px;margin-top:10px;}
+
+.gjc_xuankuang { padding-top:5px;margin-left:6px;float:left;}
+.gjc_xuankuang{ margin-left:5px;}
+.gjc_xuankuang li{background:#FFFFFF;width:118px;height:25px;color:#6f6f6f;list-style:none;margin-top:5px;text-align:center;line-height:26px;}
+
+
+
+/* 营销服务平台-触发条件设置-关键词-下 右 */
+.down_right{width:260px;height:288px;border:1px solid #e2e2e2;float:right;border-left:none;}
+.down_right_top{width:260px;height:33px;}
+.down_right_top li{width:128px;height:33px;text-align:center;float:left;}
+
+.down_right_content{margin-top:10px;}
+.down_right_content li{background:#FFFFFF;width:118px;height:25px;color:#6f6f6f;list-style:none;margin-top:5px;text-align:center;line-height:26px;float:left;border:1px solid #e2e2e2;}
+
+#top{ width:100%; height:70px; background-color:#317cb4;}
+#nav{ width:970px; height:70px; margin:0 auto;}
+#nav ul{ width:384px; height:30px; float:right; margin-top:20px; margin-right:30px;}
+#nav li{line-height:30px; float:left; padding:0 5px; list-style:none;}
+
+#footer{ clear:both;text-align:center; color:#CCC; padding:10px;padding-top:50px;}
+
+
+
+
+/* 营销服务平台-触发条件设置-位置-下 左 */
+.weizhi_xuanze{float:left;}
+.weizhi_xuanze span{ color:#6f6f6f;float:left;list-style:none;margin-top:20px;margin-left:15px;}
+.weizhi_xuanze ul {float:left;margin-left:-20px;margin-top:22px;}
+.weizhi_xuanze ul li{float:left;color:#6f6f6f;list-style:none;margin-left:40px;}
+
+
+
+/* 营销服务平台-触发条件设置-位置-下 右 */
+.down_right_content_weizhi{margin-top:10px;}
+.down_right_content_weizhi li{color:#6f6f6f;list-style:none;float:left;margin-left:35px;}
+
+
+
+
+
+/* 营销服务平台-触发条件设置-应用-上 */
+.gjc_tag3 { padding-top:30px;margin-left:5px;float:left;}
+.gjc_tag3 li{color:#6f6f6f;list-style:none;margin-top:5px;text-align:center;text-align:center;float:left;margin-left:15px;}
+
+.gjc_tag3_wz{ padding-top:10px;margin-left:5px;float:left;}
+.gjc_tag3_wz li{color:#6f6f6f;list-style:none;margin-top:5px;text-align:center;text-align:center;float:left;margin-left:15px;}
+
+
+
+
+
+
+
+
+
+
+                        <input type="text" value="活动编号：A001
+活动状态：审批中
+  随机码：
+活动内容：XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" style="width:520px; height:170px; float:right; background:#eef8ff; text-align:left; vertical-align:top; border:none; padding:10px;" />

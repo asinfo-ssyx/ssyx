@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN"
+    "http://struts.apache.org/dtds/struts-2.1.dtd">
+
+<struts>
+	<constant name="struts.multipart.maxSize" value="155000000"/>
+	<constant name="struts.multipart.saveDir" value="/tmp"></constant>
+	<constant name="struts.i18n.encoding" value="UTF-8"></constant>
+	<package name="action" namespace="/" extends="struts-default">
+		<action name="loginAction" class="com.asiainfo.action.LoginAction">
+			<result name="success">/index.jsp</result>
+		</action>
+
+		<action name="activeAction" class="com.asiainfo.action.ActiveInfoAction">
+			<result name="showList">/activeTable.jsp</result>
+			<result name="subActive">/subActive.jsp</result>
+			<result name="trigger">/trigger.jsp</result>
+			<result name="activeInfo">/activeInfo.jsp</result>
+		</action>
+
+		<action name="sendMessageAction" class="com.asiainfo.action.SendMessageAction">
+
+		</action>
+
+		<action name="triggerAction" class="com.asiainfo.action.TriggerAction">
+			<result name="showList">/appnew.jsp</result>
+			<result name="position">/position.jsp</result>
+		</action>
+		<action name="userGroup" class="com.asiainfo.action.UserGroupAction">
+			<result name="showList">/label.jsp</result>
+		</action>
+
+
+		<action name="triggerInfo" class="com.asiainfo.action.TriggerInfoAction" />
+
+		<action name="UploadAction" class="com.asiainfo.action.UploadAction">
+			<result name="glUserGroup">/glkhq.jsp</result>
+			<result name="glUserGroup1">/glkhq_1.jsp</result>
+		</action>
+
+		<action name="filterUserAction" class="com.asiainfo.action.FilterUserAction">
+			<result name="filterUser">/filterUser.jsp</result>
+		</action>
+
+		<action name="activeEvent" class="com.asiainfo.action.ActiveEventAction">
+			<result name="eventList">/loadActiveEventSelection.jsp</result>
+			<result name="webClassList">/weblist.jsp</result>
+		</action>
+
+		<action name="manegerAction" class="com.asiainfo.action.ManageAction" >
+			<result name="setEffectProduct">/setProductCodeSelect.jsp</result>
+			<result name="cityTable">/cityTable.jsp</result>
+		</action>
+
+		<action name="effectAction" class="com.asiainfo.action.EffectAction" >
+			<result name="activeCountIndex">/activeCountIndex.jsp</result>
+			<result name="effectList">/effectTable.jsp</result>
+			<result name="sendMsPage">/sendMsTable.jsp</result>
+			<result name="myActiveTable">/myActiveTable.jsp</result>
+		</action>
+
+		<action name="codeAction" class="com.asiainfo.action.BusiCodeAction" >
+			<result name="dataCodeSelect">/DataServiceCodeSelect.jsp</result>
+			<result name="effectProduct">/productCodeSelect.jsp</result>
+			<result name="userCount">/userCount.jsp</result>
+
+		</action>
+
+		<action name="searchPageAction" class="com.asiainfo.action.SearchPageAction" >
+			<result name="searchPageTable">/searchTable.jsp</result>
+		</action>
+
+        <action name="blackListAction" class="com.asiainfo.action.BlackListAction" >
+			<result name="blackList">/blackList.jsp</result>
+			<result name="blackListTable">/blackListTable.jsp</result>
+		
+		</action>
+
+		<action name="download" class="com.asiainfo.action.DownloadActiveAction" >
+		    <param name="directory">/download/</param>
+		    <result name="success" type="stream">
+		        <!-- 指定下载文件的内容类型，text/plain是默认类型 -->
+		        <param name="contentType">application/octet-stream</param>
+		        <!-- inputName默认值是inputStream，如果action中用于读取下载文件内容的属性名是inputStream，那么可以省略这个参数 -->
+		        <param name="inputName">inputStream</param>
+		        <!--动态获取文件名，从Action中的取得filename-->
+		        <param name="contentDisposition">
+		            attachment;filename="${filename}"
+		        </param>
+		        <param name="bufferSize">2048</param>
+		    </result>
+		    <result name="input">/WEB-INF/pages/inputError.jsp</result>
+		</action>
+	</package>
+
+
+</struts>

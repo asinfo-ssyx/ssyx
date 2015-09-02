@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.ActiveDAO">
+
+	<select id="getSequence" parameterType="string" resultType="string">
+		select _nextval(#{typeid})
+	</select>
+
+	<insert id="insertActiveMpBass"  parameterType="map" >
+		insert into active_info
+        	(create_time, use_id,status,active_code,active_name,
+        	begin_time,end_time,active_type,active_title,user_type,acitve_scene,city_id,user_id)
+    	values
+        	(#{create_time}, #{user_id},'0',#{active_code},#{active_name},
+        	#{begin_time},#{end_time},#{active_type},#{active_title},#{user_type},#{acitve_scene},#{city_id},#{user_id})
+  	</insert>
+  	
+	<insert id="insertActiveMp"  parameterType="map" >
+		insert into active_info
+        	(create_time, use_id,status,active_code,active_name,
+        	begin_time,end_time,active_type,active_title,user_type,acitve_scene,city_id,user_id)
+    	values
+        	(#{create_time}, #{user_id},'0',#{active_code},#{activeName},
+        	#{beginTime},#{endTime},#{activeType},#{acitveContent},#{userType},#{acitveScene},#{cityId},#{user_id})
+  	</insert>
+
+  	<update id="updateActiveStatus" parameterType="map">
+  		update active_info set status=#{status} where active_code=#{activeCode}
+  	</update>
+
+	<update id="updateActiveInfo" parameterType="map">
+		update active_info set
+						b_active_code=#{pCode},
+						url=#{ourl},
+						status=#{status},
+						active_ms_type=#{activeMsType},
+						order_no=#{order_no}
+						<if test="productId != null and productId !='' ">
+							,product_id=#{productId}
+						</if>
+				where active_code=#{activeCode}
+	</update>
+
+	<select id="queryTrigger" parameterType="map" resultType="map">
+		select a.trigger_type,group_concat(a.trigger_ms separator <![CDATA["</span><span>"]]>) trigger_ms
+			FROM
+			(select trigger_type,trigger_ms from trigger_info where active_code=#{activeCode} and trigger_type<![CDATA[<>]]>3
+			 GROUP BY trigger_type,trigger_ms ) a
+			GROUP BY a.trigger_type ORDER BY a.trigger_type
+	</select>
+
+	<select id="queryUserGroup" parameterType="map" resultType="map">
+		select group_name table_col
+		from user_group_info where active_code=#{activeCode} and group_type=1 and status=1
+	</select>
+
+	<select id="querySendMessage" parameterType="map" resultType="map">
+		select send_type,send_ms,status,active_rule from send_message where active_code=#{activeCode} and status=2  ORDER BY  send_type
+	</select>
+
+	<select id="queryActiveId" parameterType="string" resultType="map">
+		select seq_no from active_info where active_code=#{activeCode}
+	</select>
+
+	<select id="queryActiveList" parameterType="map" resultType="map">
+		SELECT a.*,c.scene_name,(case when b.city_name is null  then '全省'
+				    else b.city_name end) city_name FROM
+				    active_info a left join vgop_city_info b on a.city_id=b.city_id
+				    			  left join active_scene c on a.acitve_scene=c.scene_id
+				    where
+		<if test="b_active_code != null and b_active_code !='' ">
+			 b_active_code=#{b_active_code} and
+		</if>
+		<if test="active_name != null and active_name !='' ">
+			 active_name like CONCAT('%','${active_name}','%' )  and
+		</if>
+		<if test="activeType != null and activeType !='' ">
+			 active_type=#{activeType}  and
+		</if>
+		<!-- 时间判断 -->
+		<if test="nStart != null and nStart !='' ">
+			 begin_time<![CDATA[>]]>#{nStart}  and
+		</if>
+		<if test="runNow != null and runNow !='' ">
+			 begin_time <![CDATA[ < ]]>#{runNow}  and end_time<![CDATA[>]]>#{runNow} and
+		</if>
+		<if test="beginTime != null and beginTime !='' ">
+			 a.begin_time<![CDATA[>]]>#{beginTime}  and
+		</if>
+		<if test="endTime != null and endTime !='' ">
+			 a.end_time<![CDATA[<]]>#{endTime} and
+		</if>
+		<if test="isOver != null and isOver !='' ">
+			 end_time<![CDATA[<]]>#{isOver} and
+		</if>
+
+		<if test="scityId != null and scityId !='' ">
+			 a.city_id=#{scityId} and
+		</if>
+
+		<if test="activeExStatus != null and activeExStatus !='' ">
+			 a.status in (${activeExStatus}) and
+		</if>
+		<if test="acitveScene != null and acitveScene !='' ">
+			 a.acitve_scene=#{acitveScene} and
+		</if>
+		<if test="acitveContent != null and acitveContent !='' ">
+			 a.active_title like  CONCAT('%','${acitveContent}','%' )  and
+	   </if>
+		<!-- 状态 0 代表不可用 9代表以删除活动 -->
+		
+		status not in (0,9)  ORDER BY seq_no desc
+		LIMIT #{beginNum},#{endNum}
+	</select>
+
+
+	<select id="queryActiveCount" parameterType="map" resultType="map">
+		SELECT count(1) pageCount FROM active_info where
+		<if test="b_active_code != null and b_active_code !='' ">
+			 b_active_code=#{b_active_code} and
+		</if>
+		<if test="active_name != null and active_name !='' ">
+			active_name like CONCAT('%','${active_name}','%' )  and
+		</if>
+		<if test="activeType != null and activeType !='' ">
+			 active_type=#{activeType}  and
+		</if>
+
+
+		<if test="nStart != null and nStart !='' ">
+			 begin_time<![CDATA[>]]>#{nStart}  and
+		</if>
+		<if test="runNow != null and runNow !='' ">
+			 begin_time <![CDATA[ < ]]>#{runNow}  and end_time<![CDATA[>]]>#{runNow} and
+		</if>
+		<if test="isOver != null and isOver !='' ">
+			 end_time<![CDATA[<]]>#{isOver} and
+		</if>
+
+		<if test="scityId != null and scityId !='' ">
+			 city_id=#{scityId} and
+		</if>
+
+		<if test="activeExStatus != null and activeExStatus !='' ">
+			 status in (${activeExStatus}) and
+		</if>
+		<if test="acitveScene != null and acitveScene !='' ">
+			 acitve_scene=#{acitveScene} and
+		</if>
+		<if test="acitveContent != null and acitveContent !='' ">
+			 active_title like  CONCAT('%','${acitveContent}','%' )  and
+	   </if>
+
+	 	status not in (0,9)
+	</select>
+
+
+	<insert id="insertCopyCreateActiveTrigger" parameterType="map">
+		INSERT INTO trigger_info
+			SELECT #{copyActiceCode},trigger_type,trigger_ms,1,#{userId},#{createTime} FROM
+				trigger_info where active_code=#{acticeCode} and status=1
+	</insert>
+
+
+	<insert id="insertCopyCreateActiveUserGroup" parameterType="map">
+		INSERT INTO user_group_info(acitve_code,group_name,status)
+			SELECT #{copyActiceCode},group_name,1 from user_group_info
+				where active_code=#{acticeCode} and status=1
+	</insert>
+
+	<select id="queryGlUserGroup"  parameterType="map" resultType="map">
+		select group_name table_col
+		from user_group_info where active_code=#{activeCode} and group_type=2 and status=1
+	</select>
+
+	<select id="queryActiveMq" parameterType="string" resultType="map">
+		select group_concat( DISTINCT trigger_code separator ",") tmcode from trigger_info where
+		active_code=#{activeCode}  and trigger_type=2 and status=1 GROUP BY trigger_type
+	</select>
+
+	<select id="queryActiveBsMq" parameterType="string" resultType="map">
+		SELECT group_concat(trigger_code separator ",") tmcode from trigger_info
+			WHERE active_code=#{activeCode} and trigger_type=3 and status=1
+	</select>
+
+	<select id="queryActiveKeyWordMq" parameterType="string" resultType="map">
+		SELECT group_concat(trigger_ms separator ",") tmcode from trigger_info
+			WHERE active_code=#{activeCode} and trigger_type=1
+	</select>
+
+
+	<select id="queryOverDataActive" resultType="map" parameterType="string">
+		SELECT * FROM active_info where end_time<![CDATA[<]]>#{nowTime} and status=2
+	</select>
+
+	<select id="updateActiveOverDate" parameterType="string">
+         update active_inf set status=3 where active_code = #{activeCode}
+	</select>
+
+	<select id="ActiveSetTest" parameterType="string" resultType="map">
+		select 1 ty,count(1) con from trigger_info where
+			STATUS=1 and active_code = #{activeCode}
+		union
+		SELECT 2 ty,count(1) con from user_group_info where
+			status=1 AND group_type=1 and active_code = #{activeCode}
+		union
+		SELECT 3 ty,count(1) con from send_message where
+			status=2 and active_code = #{activeCode}
+	</select>
+	<select id="queryActiveInfo" parameterType="string" resultType="map">
+		select * from active_info where active_code=#{activeCode}
+	</select>
+
+	<select id="queryActiveSendInfo" resultType="map">
+		SELECT z.search_sql user_group,z.rule_code dbs,y.*,x.acitve_scene,x.city_id FROM
+				(select active_code,acitve_scene,city_id from active_info where
+						begin_time<![CDATA[<]]> #{nowTime}
+						and end_time<![CDATA[>]]>#{nowTime} and active_type=2 and status=2) x
+		JOIN
+			(SELECT * from send_message where STATUS=2 AND send_status=1 and send_type in ('1','2')) y
+		ON x.active_code=y.active_code
+		JOIN
+			user_group_info z
+		ON x.active_code=z.active_code
+		where z.group_type=1
+
+	</select>
+
+
+	<insert id="insertActiveSendLog" parameterType="map">
+		INSERT INTO active_send_log(active_code,create_time) VALUES(#{active_code},#{createTime})
+	</insert>
+
+	<select id="isActiveSendMessage" parameterType="map" resultType="int">
+		select count(*) from active_send_log WHERE
+				active_code=#{active_code} and create_time<![CDATA[>]]>#{uTime}
+	</select>
+
+
+	<select id="getSendMqType" parameterType="map" resultType="string">
+		SELECT trigger_type FROM trigger_info where
+			active_code=#{activeCode} and status=1 and trigger_type <![CDATA[ <> ]]> 0 GROUP BY trigger_type
+	</select>
+
+	<select id="querySubTriggerInfoMq" parameterType="map" resultType="map">
+		select group_concat( DISTINCT trigger_code separator ",") tmcode from trigger_info where
+		active_code=#{activeCode}  and trigger_type=#{triggerType} and status=1 GROUP BY trigger_type
+	</select>
+
+	<select id="queryExamineUser" resultType="map">
+		SELECT examine_useid,examine_phone,examine_name,city_id FROM examine_user
+	</select>
+
+
+	<select id="getActiveInfo" parameterType="string" resultType="map">
+		select * from active_info where active_code=#{activeCode} limit 1
+	</select>
+
+	<select id="getNowRunActiveCode" parameterType="string" resultType="string">
+		select active_code from active_info where
+		<if test="nowTime == null and nowTime =='' ">
+			 begin_time<![CDATA[ > ]]>#{nowTime} and
+		</if>
+		<if test="nowTime != null and nowTime !='' ">
+			 begin_time<![CDATA[ < ]]>#{nowTime} and end_time<![CDATA[ > ]]>#{nowTime} and
+		</if>
+		status=2;
+	</select>
+
+	<select id="getEffectPara" parameterType="string" resultType="map">
+	select a.active_code,b.use_val,a.product_id,a.begin_time,a.end_time from active_info a join user_group_info b on a.active_code=b.active_code
+			 where b.status=1 and b.group_type=1 and a.active_code=#{activeCode}  limit 1;
+	</select>
+	<insert id="insertEffect" parameterType="map">
+		insert into effect_active(active_code,user_count,send_count,tran_count,flow_count,create_time)
+		values(#{active_code},#{use_val},0,0,0,now())
+	</insert>
+
+	<insert id="addAdviceMessage" parameterType="map">
+		update active_info set advice_message=#{adviceMessage} where active_code=#{activeCode}
+	</insert>
+
+	<select id="getTestPhoneList" parameterType="string" resultType="string">
+		SELECT phone_no FROM active_test_phone WHERE active_code=#{activeCode} GROUP BY phone_no
+	</select>
+
+	<select id="getEffectProduct" parameterType="string" resultType="map">
+		SELECT price_code,busi_code,product_code  FROM effect_product_code where product_id in (${productId})
+	</select>
+
+	<select id="querySendMsActiveInfo" parameterType="string" resultType="map">
+		select a.*,(case when b.city_name is null  then '全省'
+				    else b.city_name end) city_name FROM
+				    active_info a left join vgop_city_info b on a.city_id=b.city_id
+		where a.active_code in(${activeList})
+	</select>
+
+	<select id="querySendMsType" parameterType="string" resultType="map">
+		SELECT send_type,bus_code FROM send_message where active_code=#{activeCode} and status=2
+	</select>
+
+	<insert id="insertFtpActiveLog" parameterType="string">
+		insert into ftp_active_log(active_code,create_time) values(#{activeCode},now())
+	</insert>
+   <!-- JOIN mktsrv_global_data c ON b.bus_code=c.BUSI_CODE
+        c.BUSI_CODE,c.BUSI_NAME,
+         -->
+	<select id="getFtpActiveInfo" parameterType="map" resultType="map">
+		SELECT  a.active_code,a.active_name,a.begin_time,a.end_time,b.send_ms,b.active_rule,e.search_sql,e.rule_code
+			FROM active_info a JOIN send_message b ON a.active_code=b.active_code	
+										 JOIN ftp_active_log d ON a.active_code=d.active_code
+										 JOIN user_group_info e ON a.active_code=e.active_code
+			where d.ftp_status=0 and e.group_type=1 AND e.status=1
+	</select>
+	<update id="updateFtpActiveLogStatus" parameterType="string">
+		UPDATE ftp_active_log SET ftp_status=1 where active_code=#{activeCode}
+	</update>
+
+	<select id="getActiveUserGroup" parameterType="string" resultType="map">
+		SELECT * FROM user_group_info WHERE active_code=#{activeCode} and rule_code <![CDATA[<>]]>''
+	</select>
+
+</mapper>

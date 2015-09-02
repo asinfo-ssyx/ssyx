@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.UploadDAO">
+<insert id="insertUsers">
+		insert into upload_users (active_code,phone_no,up_type)
+		    values
+		    <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		         (
+			         #{activeCode},
+			         #{item},
+			         #{upType}
+		         )
+		    </foreach>
+	</insert>
+
+	<select id="queryGlUserGroup" resultType="map" parameterType="string">
+		SELECT gl_code ucode,gl_name uname FROM gl_user_group  where group_type=0
+			AND (city_id=0 or city_id= #{cityId}) AND statue=1
+	</select>
+
+	<insert id="insertGlUserGroup" parameterType="list">
+		insert into user_group_info (group_name,active_code,group_type,status)
+		values
+		<foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		         (
+			        #{item.ug},
+			         #{item.activeCode},
+			         2,
+			         1
+		         )
+		    </foreach>
+	</insert>
+
+	<insert id="insertUserGroup" parameterType="map">
+		insert into gl_user_group(gl_code,gl_name,active_code,group_type,city_id,table_name)
+		values(#{gl_code},#{gl_name},#{active_code},#{group_type},#{city_id},#{table_name})
+	</insert>
+
+	<select id="isRuserGroupName" parameterType="map" resultType="int">
+		select count(1) con from gl_user_group where gl_name=#{gl_name}
+	</select>
+	<delete id="deleteGlGroupName"  parameterType="map" >
+		  delete from gl_user_group where gl_code=#{gl_code}
+	</delete>
+
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.UserGroupDAO">
+
+	<insert id="insertGoup" parameterType="map">
+		 insert into user_group (group_name,search_sql,group_type)
+		    values ( #{group_name}, #{search_sql},1)
+	</insert>
+	<select id="selectGroup" resultType="String">
+		select group_name from user_group where group_type=1
+	</select>
+
+
+</mapper>

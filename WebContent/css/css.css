@@ -1,0 +1,17 @@
+@charset "utf-8";
+#all{ width:1236px; height:844px; margin:0 auto; background-color:#ffffff; border:1px solid #656565; text-align:center; color:#808080;
+font-family:"宋体"; font-size:12px;}
+#top{ width:100%; height:70px; background-color:#317cb4;}
+#nav{ width:450px; height:30px; float:right; margin-top:20px;}
+#nav li{line-height:30px; float:left; padding:0 10px; list-style:none;}
+#content{ width:1236px; height:754px; background-color:#f6f6f6;margin-top:0px;}
+#left{ width:82px; height:774px; background-color:#656565; float:left;}
+#left ul{ padding:0 0; float:left; margin:0 0;}
+#left li{ height:90px; line-height:90px; list-style:none; padding:0 0; }
+#right{width:1154px; height:774px; float:right; background-color:#f6f6f6;}
+#bar{width:1114px; height:60px; margin-top:0; margin-left:0; background-color:#ffffff; text-align:left; padding-left:40px; border-bottom:1px solid #dfdfdf;}
+#tab{ width:1080px;margin:30px auto; background-color:#dfdfdf;}
+#tab ul{width:1080px; margin:0px; padding:0;}
+#tab li{width:9.8%; height:39px; line-height:39px; text-align:center; float:left; list-style:none; background-color:#FFF; margin-left:1px; margin-top:1px;}
+#tab li.biaotou{ height:35px; ;color:#606060; background-color:#dfdfdf; font-size:14px;}
+#footer{ color:#CCC;}

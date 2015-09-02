@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.KeyWordDAO">
+	 
+    <resultMap type="com.asiainfo.bean.KeyWord" id="keyWord">
+       <result property="keyCode"     column="key_code" />
+       <result property="keyName"     column="key_name" />
+       <result property="ucode"  	  column="ucode" />
+       <result property="createTime"  column="create_time" />
+       <result property="status"      column="status" />
+    </resultMap>  
+	<select id="selectKeyWordByWord" parameterType="String" resultMap="keyWord">
+		select * from keyword_info where ucode in
+			(select key_code from keyword_info where key_name = #{keyName})
+		union
+		select * from keyword_info where key_name= #{keyName}
+	</select>	
+</mapper>

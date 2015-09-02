@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.UserGroupInfoDAO">
+
+    <resultMap type="com.asiainfo.bean.UserGroupInfo" id="group">
+       <result property="activeCode"  column="active_code" />
+       <result property="tableCol"    column="table_col" />
+       <result property="colType"     column="col_type" />
+       <result property="useVal"      column="use_val" />
+       <result property="searchSql"   column="search_sql" />
+       <result property="groupName"   column="group_name" />
+       <result property="ruleCode"    column="rule_code" />
+       <result property="status"      column="status" />
+    </resultMap>
+
+	<select id="selectGroupById" parameterType="String" resultMap="group">
+		select active_code, table_col, col_type, use_val, search_sql, group_name, rule_code, status
+		  from user_group_info
+		 where active_code = #{activeCode} and group_type=1
+	</select>
+	<update id="updateGroup" parameterType="String">
+  		update user_group_info
+  		   set table_col = #{tableCol}, search_sql=#{searchSql}
+  		 where active_code = #{activeCode} and group_type=1
+  	</update>
+
+	<insert id="selectedUserGroupInsert" parameterType="list">
+    	insert into user_group_info
+        	(active_code, search_sql, group_name, status,group_type,use_val,rule_code)
+    	values
+    	 <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		      (#{item.active_code},#{item.searchSql},#{item.group_name},1,1,#{item.customNum},#{item.dataBaseS})
+		      </foreach>
+
+  	</insert>
+
+  	<delete id="deleteAllGroup" parameterType="String">
+  		delete from user_group_info where active_code = #{activeCode} and group_type=1
+  	</delete>
+
+	<select id="isSubUserGroup" parameterType="string" resultType="int">
+		SELECT count(*) from user_group_info WHERE active_code=#{activeCode} AND group_type=1 AND status=1;
+	</select>
+
+
+	<select id="queryNetServiceActive" resultType="map" parameterType="map">
+		SELECT a.active_code,a.begin_time,a.end_time,a.active_name,b.send_no,b.bus_code,b.send_type,c.search_sql user_group,c.rule_code dbs FROM
+				(SELECT active_code,begin_time,end_time,active_name FROM active_info
+						where  begin_time<![CDATA[ < ]]>#{nowTime}
+						  and  end_time<![CDATA[ > ]]>#{nowTime}
+						  AND  status=2
+						  AND  active_type=2) a JOIN
+				(SELECT active_code,send_no,bus_code,send_type FROM send_message
+						WHERE send_type IN (5,6,7,8)
+						  AND  status=2) b ON a.active_code=b.active_code
+			    JOIN user_group_info c ON a.active_code=c.active_code
+		WHERE c.status=1 and c.group_type=1 and a.active_code not in(select active_code from insert_webservice_log)
+	</select>
+
+	<select id="getBqkUserInfo" resultType="map" parameterType="string" >
+		select * from bqk_user_info where vgop_user=#{user}
+	</select>
+
+</mapper>

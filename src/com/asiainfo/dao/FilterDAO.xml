@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.FilterDAO">
+
+	<select id="querySubUserGroup" parameterType="string" resultType="String">
+		select group_name FROM user_group_info WHERE active_code=#{activeCode}
+			and group_type=1 and status=1 GROUP BY group_name
+	</select>
+
+	<select id="querySubFilterUserGroup" parameterType="string" resultType="String">
+		select group_name from user_group_info where active_code=#{activeCode}
+			and group_type=2 and status=1 GROUP BY group_name
+	</select>
+</mapper>

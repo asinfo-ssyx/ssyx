@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/context
+  		http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd" default-autowire="byType">
+
+	<!-- 配置数据源 -->
+
+
+
+
+	<bean id="dataSource"
+      	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<!-- 		<property name="driverClassName">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+
+		<property name="url">
+			<value>jdbc:mysql://localhost:3306/mysql?useUnicode=true&amp;characterEncoding=UTF-8</value>
+		</property>
+		<property name="username">
+			<value>root</value>
+		</property>
+		<property name="password">
+			<value>admin</value>
+		</property>
+-->
+		<property name="driverClassName">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+
+		<property name="url">
+			<value>jdbc:mysql://localhost:3306/ssyx?useUnicode=true&amp;characterEncoding=UTF-8</value>
+		</property>
+		<property name="username">
+			<value>root</value>
+		</property>
+		<property name="password">
+			<value></value>
+		</property>		
+		
+<!--
+		  <property name="url">
+                        <value>jdbc:mysql://10.112.8.85:3306/ssyx?useUnicode=true&amp;characterEncoding=UTF-8</value>
+                </property>
+                <property name="username">
+                        <value>ssyx</value>
+                </property>
+                <property name="password">
+                        <value>ssyx</value>
+                </property>
+-->
+	</bean>
+
+	<!--MapperScannerConfigurer配置-->
+  	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<!--basePackage指定要扫描的包，在此包之下的映射器都会被  搜索到。可指定多个包，包与包之间用逗号或分号分隔-->
+     	<property name="basePackage" value="com.asiainfo.dao" />
+  	</bean>
+
+  	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+  		<!--dataSource;连接池配置-->
+        <property name="dataSource" ref="dataSource" />
+       	<!--configLocation;mybatis的配置文件-->
+        <property name="configLocation" value="classpath:mybatis.xml"></property>
+    </bean>
+
+ 	<!--  task:scheduled-tasks>
+        <task:scheduled ref="queryActiveThread"  method="doQueryActive" cron="0 0/15 * * * ?"/>
+        <task:scheduled ref="updateSendMessageStatus"  method="doUpdate" cron="0 0/10 * * * ?"/>
+        <task:scheduled ref="dataImport"  method="Data228To134" cron="0 0 4 * * ?"/>
+        <task:scheduled ref="pushFtpThread"  method="shPushFtp" cron="0 0 22 * * ?"/>
+        <task:scheduled ref="effectActiveProductThread"  method="doWork" cron="0 0 22 * * ?"/>
+        <task:scheduled ref="effectActiveCountThread"  method="doWork" cron="0 0 22 * * ?"/>
+        <task:scheduled ref="netServiceThread"  method="doWork" cron="0 0/5 * * * ?"/>
+     	<task:scheduled ref="ftpActiveThread"  method="doWork" cron="0 0/10 * * * ?"/>
+    </task:scheduled-tasks>-->
+
+	<context:component-scan base-package="com">
+
+    </context:component-scan>
+
+</beans>

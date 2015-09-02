@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.BusiCodeDAO">
+
+	<select id="getDataBusiBigType" parameterType="string" resultType="map">
+		select busi_code,MAX(busi_name) busi_name  FROM  mktsrv_global_data
+			where code_type=#{group_id}
+		group by busi_code
+	</select>
+
+	<select id="getDataBusiSmallType" parameterType="string" resultType="map">
+		select product_name,product_id
+		from effect_product_code where type_name=#{bigType}
+	</select>
+
+	<select id="getEffectProduct" resultType="string">
+		select type_name from effect_product_code GROUP BY type_name
+	</select>
+
+	<select id="getActiveUser" resultType="map">
+		select a.active_name,a.active_code,b.search_sql
+		from active_info a LEFT JOIN user_group_info b on a.active_code=b.active_code
+		WHERE a.status=2 AND b.status=1 and b.group_type=1
+	</select>
+
+	<select id="searchActive" parameterType="string" resultType="map">
+	select a.active_code,a.active_name from active_info a JOIN send_message b ON a.active_code=b.active_code
+		WHERE a.STATUS=2  AND b.status=2 AND b.send_ms LIKE "%"#{sm}"%" ORDER BY a.begin_time DESC
+	</select>
+
+</mapper>

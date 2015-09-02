@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.EffectDAO">
+
+	<select id="queryActiveScene" resultType="map">
+		select * from active_scene
+	</select>
+
+	<select id="queryActiveInfo" parameterType="map" resultType="map">
+		SELECT b.city_name,a.acitve_scene, con
+				from  vgop_city_info b  LEFT JOIN
+					  (SELECT city_id,acitve_scene,count(1) con FROM active_info
+					  			where status=2
+					  			<if test="startTime != null and startTime !='' ">
+			 						and begin_time<![CDATA[>]]>#{startTime}
+								</if>
+								<if test="endTime != null and endTime !='' ">
+									and end_time<![CDATA[<]]>#{endTime}
+								</if>
+					  			GROUP BY city_id,acitve_scene order by city_id ) a
+			ON b.city_id=a.city_id ORDER BY a.city_id
+	</select>
+
+	<select id="queryEffectActiveList" parameterType="map" resultType="map">
+		SELECT a.*,c.scene_name,
+					(case when b.city_name is null  then '全省' else b.city_name end) city_name,
+				   <!--  (case when d.use_val is null  then 0 else d.use_val end) use_val,  -->
+				    d.group_name,
+				    d.search_sql,
+				    (case when e.user_count is null  then 0 else e.user_count end) use_val,
+				    (case when e.send_count is null  then 0 else e.send_count end) send_count,
+				    (case when e.tran_count is null  then 0 else e.tran_count end) tran_count,
+				    (case when e.flow_count is null  then 0 else e.flow_count end) flow_count,
+				    x.send_type
+				    FROM
+				    active_info a left join vgop_city_info b on a.city_id=b.city_id
+				    			  left join active_scene c on a.acitve_scene=c.scene_id
+				    			  left join (select * from user_group_info where status=1 AND group_type=1 ) d
+				    			  on a.active_code=d.active_code
+				    			  left join (select * from send_message where status=2) x on a.active_code=x.active_code
+				    			  left join effect_active e on a.active_code=e.active_code
+				    where
+		<if test="activeType != null and activeType !='' ">
+			 a.active_type=#{activeType}  and
+		</if>
+		<!-- 时间判断 -->
+		<if test="startTime != null and startTime !='' ">
+			 a.begin_time<![CDATA[>]]>#{startTime}  and
+		</if>
+		<if test="endTime != null and endTime !='' ">
+			 a.end_time<![CDATA[<]]>#{endTime} and
+		</if>
+		<if test="cityId != null and cityId !='' ">
+			 (a.city_id=#{cityId} or a.city_id='s${cityId}') and
+		</if>
+		<if test="activeScene != null and activeScene !='' ">
+			 a.acitve_scene=#{activeScene} and
+		</if>
+		<if test="activeSendType ==1 ">
+			 a.product_id <![CDATA[ <> ]]> '' and
+		</if>
+		<if test="activeSendType ==2 ">
+			 a.url <![CDATA[ <> ]]> ''  and
+		</if>
+		<if test="orderSta != null and orderSta !='' ">
+			send_count>0 and
+		</if>
+
+		<if test="userId !=null and userId !='' ">
+			a.user_id =#{userId} and
+		</if>
+		<if test="activeName != null and activeName !='' ">
+			 a.active_name like  CONCAT('%','${activeName}','%' ) and
+	   </if>
+	   <if test="isEffect ==0 ">
+			(a.active_ms_type is null or a.active_ms_type = '')  and a.status not in (0,9) 
+		</if>
+		<if test="isEffect !=0 ">
+			a.status = 2 
+		</if>
+		  ORDER BY
+
+		
+
+		<if test="orderSta != null and orderSta !='' ">
+			(tran_count/send_count)
+		</if>
+		<if test="orderSta == null or orderSta =='' ">
+			a.begin_time
+		</if>
+		<if test="orderSta != null and orderSta !='' ">
+			${orderSta}
+		</if>
+		<if test="orderSta == null or orderSta =='' ">
+			desc
+		</if>
+
+		LIMIT #{beginNum},#{endNum}
+
+	</select>
+
+	<select id="queryEffectCount" resultType="map" parameterType="map">
+		select count(1) pageCount from  active_info a left join effect_active b on a.active_code=b.active_code
+		where
+		<if test="activeType != null and activeType !='' ">
+			 a.active_type=#{activeType}  and
+		</if>
+		<!-- 时间判断 -->
+		<if test="startTime != null and startTime !='' ">
+			 a.begin_time<![CDATA[>]]>#{startTime}  and
+		</if>
+		<if test="endTime != null and endTime !='' ">
+			 a.end_time<![CDATA[<]]>#{endTime} and
+		</if>
+		<if test="cityId != null and cityId !='' ">
+			 a.city_id=#{cityId} and
+		</if>
+		<if test="activeScene != null and activeScene !='' ">
+			 a.acitve_scene=#{activeScene} and
+		</if>
+		<if test="activeSendType ==1 ">
+			 a.product_id <![CDATA[ <> ]]> '' and
+		</if>
+		<if test="activeSendType ==2 ">
+			 a.url <![CDATA[ <> ]]> ''  and
+		</if>
+		<if test="orderSta != null and orderSta !='' ">
+			b.send_count>0 and
+		</if>
+
+		
+		<if test="userId !=null and userId !='' ">
+			a.user_id =#{userId} and
+		</if>
+		<if test="activeName != null and activeName !='' ">
+			 a.active_name like  CONCAT('%','${activeName}','%' )  and
+	   </if>
+	   <if test="isEffect ==0 ">
+			(a.active_ms_type is null or a.active_ms_type = '') and a.status !=0 and a.status !=9 
+		</if>
+		<if test="isEffect !=0 ">
+			a.status = 2 
+		</if>
+
+
+
+	</select>
+
+	<insert id="insertActiveEffect" parameterType="map">
+		insert into effect_active value(#{activeCode},#{sendCount},#{tranCount},#{flowCount},#{createTime});
+	</insert>
+
+	<update id="updateActiveEffect" parameterType="map">
+		update effect_active set
+		<if test="send_count != null and send_count !='' ">
+			   send_count=send_count+#{send_count},
+		</if>
+		<if test="tran_count != null and tran_count !='' ">
+			   tran_count=tran_count+#{tran_count},
+		</if>
+		<if test="flow_count != null and flow_count !='' ">
+			   flow_count=flow_count+#{flow_count},
+		</if>
+			   create_time=#{createTime}
+		where active_code=#{activeCode}
+	</update>
+
+	<select id="isHaveActiveCode" parameterType="string" resultType="int">
+		select count(1) from effect_active where acitve_code=#{activeCode}
+	</select>
+
+	<select id="queryActiveProductCode" resultType="map" >
+		SELECT a.*,b.price_code,b.busi_code,b.product_code FROM
+			(SELECT active_code,begin_time,end_time,product_id
+				FROM active_info
+			 WHERE begin_time <![CDATA[<]]> NOW() AND end_time <![CDATA[>]]> NOW() AND status=2) a
+		JOIN effect_product_code b ON a.product_id=b.product_id
+	</select>
+	<insert id="insertActiveSendInfo" parameterType="list">
+		insert into active_send_info
+			(active_code,
+			 today_rnum,
+			 sevday_rnum,
+			 city_rnum,
+			 now_city_send,
+			 city_param,
+			 real_send_count,
+			 send_date,
+			 send_time,
+			 city_id)
+		    values
+		    <foreach collection="list" item="item" index="index" open="" separator=","  close="">
+		         (
+			         #{item.active_code},
+			         #{item.today_rnum},
+			         #{item.sevday_rnum},
+			         #{item.city_rnum},
+			         #{item.now_city_send},
+			         #{item.city_param},
+			         #{item.send_count},
+			         #{item.send_date},
+			         #{item.send_time},
+			         #{item.city_id}
+		         )
+		    </foreach>
+	</insert>
+
+	<select id="searchActiveSendInfo" parameterType="string" resultType="map">
+	SELECT * FROM active_send_info where active_code= #{activeCode} ORDER BY send_time DESC
+	</select>
+
+
+</mapper>

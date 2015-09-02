@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.dao.SendMessageDAO">
+
+	<select id="queryMessageCode" parameterType="string" resultType="string">
+		SELECT dx_code FROM send_message where send_ms=#{message} limit 1
+	</select>
+
+
+
+	<insert id="insertSendMessage" parameterType="map">
+
+    	insert into send_message
+        	(send_code,
+			 active_code,
+             send_time,
+             send_ms,
+             cross_flag,
+             status,
+             send_type,
+             examine_id,
+             user_id,
+             create_time ,
+             dx_code,send_cycle)
+    	values
+        	(#{sendCode}, #{activeCode}, #{sendTime}, #{send_ms}, #{cross_flag}
+        	, "2", #{send_type}, #{examine_id}, #{user_id}, #{createTime},#{dxCode},#{send_cycle})
+  	</insert>
+
+  	<insert id="insertExamineLog" parameterType="map">
+		insert into examine_log(
+								active_code,
+								send_code,
+								send_ms,
+								send_time,
+								examine_time,
+								examine_id,
+								use_id)
+		values(#{send_time},#{phone_no},#{activeCode},#{sendCode},#{send_ms},#{ms_type})
+	</insert>
+
+    <select id="getExamineId" parameterType="map" resultType="map">
+		select * from examine_user where examine_id=#{user_id}
+	</select>
+
+	<insert id="insertSendMessageLog" parameterType="map">
+		insert into send_message_log(send_time,
+									phone_no,
+									active_code,
+									send_ms,
+									send_code,
+									ms_type,
+									dx_code)
+								values(#{send_Time},#{phone_no},#{activeCode},#{send_ms},
+								       #{sendCode},#{ms_type},#{dxCode})
+	</insert>
+
+
+	<update id="updateSendMessageStatus" parameterType="map">
+		update send_message set status=#{status} where send_code=#{sendCode}
+	</update>
+
+	<update id="updateAfterSendMessageStatus" parameterType="map">
+		update send_message set status=3 where
+		active_code=#{activeCode} and status=#{status} and send_type=#{send_type}
+	</update>
+
+	<select id="getSendMessages" parameterType="map">
+		select send_type,send_ms from send_message where active_code=#{activeCode} and status=#{status}  ORDER BY  send_type
+	</select>
+
+	<update id="updateSendMessage" parameterType="string">
+
+	</update>
+
+	<select id="querySubSendMessages" parameterType="string" resultType="string">
+		select send_type from send_message WHERE active_code=#{activeCode} and status=2 ORDER BY create_time
+	</select>
+
+	<insert id="shortMessageCodeSend" parameterType="map">
+		insert into send_message(send_code,active_code,send_time,dx_code,send_type,create_time,send_ms)
+			values(#{sendCode},#{activeCode},#{sendTime},#{smbCode},#{send_type},#{create_time},#{smbCode});
+	</insert>
+
+	<select id="queryActiveShr" parameterType="map" resultType="map">
+		select examine_id,examine_name from examine_user where city_id=#{cityId}  ORDER BY examine_id
+	</select>
+
+
+	<update id="updateSendStatus" parameterType="string">
+		UPDATE send_message SET send_status=1 WHERE
+			send_time<![CDATA[<]]> #{nowTime}
+			and send_time <![CDATA[<>]]> '0000-00-00 00:00:00'
+			and send_status=0
+			and status=2
+	</update>
+
+	<insert id="addWebServiceSendMessage" parameterType="map">
+		insert into send_message
+        	(send_code,
+			 active_code,
+             send_ms,
+             status,
+             send_type,
+             create_time ,
+             bus_code,
+             active_rule)
+    	values
+        	(#{sendCode}, #{activeCode}, #{sendMs}
+        	,2, #{sendType},#{createTime},#{busCode},#{disName})
+
+	</insert>
+	<update id="updatAllSendMessageStatus" parameterType="map">
+		update send_message set status=3 where
+		active_code=#{activeCode} and status=2
+	</update>
+
+	<insert id="addTestPhone" parameterType="map">
+		insert into active_test_phone(active_code,phone_no)
+		values(#{activeCode},#{testPhone})
+	</insert>
+
+
+</mapper>
