@@ -196,44 +196,44 @@ public class DataBaseJdbc {
 		Map<String,Object> map=null;
 		
 /* !!!!!!!!!!!!!!  生产上线   !!!!!!!!!!!!!!!!!!!!!!!*/
-		Connection conn=null;
-		Statement stmt=null;
-		ResultSet set=null;
-		try {
-			String sql=" select * from suite.user_user where USERID='"+userId+"' fetch first 1 rows only";
-			conn=DataBaseJdbc.get228DB2Connection();
-			log.info("con00000000000000000000000n:"+conn);
-			stmt=conn.createStatement();
-			set = stmt.executeQuery(sql);
-
-			while(set.next()) {
-				map=new HashMap<String,Object>();
-				log.info("set.getString(CITYID):"+set.getString("CITYID"));
-				map.put("cityId", set.getString("CITYID").replaceAll("s",""));
-				map.put("userId", userId);
-			}
-		} catch (Exception e) {
-			log.error("查询28用户报错:"+e.getMessage());
-		}finally{
-			try {
-				if(set!=null)set.close();
-				if(stmt!=null)stmt.close();
-				if(conn!=null)conn.close();
-			} catch (Exception e) {
-			}
-		}
-		
-/* !!!!!!!!!!!!!!!开发调试!!!!!!!!!!!!!!!!!!!!!!!*/
-//		if(map==null){
-//			map=new HashMap<String,Object>();
+//		Connection conn=null;
+//		Statement stmt=null;
+//		ResultSet set=null;
+//		try {
+//			String sql=" select * from suite.user_user where USERID='"+userId+"' fetch first 1 rows only";
+//			conn=DataBaseJdbc.get228DB2Connection();
+//			log.info("con00000000000000000000000n:"+conn);
+//			stmt=conn.createStatement();
+//			set = stmt.executeQuery(sql);
 //
-//			map.put("userId", userId);
-//			if("yangsy".equals(userId)){
-//				map.put("cityId", "999");
-//			}else {
-//				map.put("cityId", "3");
+//			while(set.next()) {
+//				map=new HashMap<String,Object>();
+//				log.info("set.getString(CITYID):"+set.getString("CITYID"));
+//				map.put("cityId", set.getString("CITYID").replaceAll("s",""));
+//				map.put("userId", userId);
+//			}
+//		} catch (Exception e) {
+//			log.error("查询28用户报错:"+e.getMessage());
+//		}finally{
+//			try {
+//				if(set!=null)set.close();
+//				if(stmt!=null)stmt.close();
+//				if(conn!=null)conn.close();
+//			} catch (Exception e) {
 //			}
 //		}
+		
+// !!!!!!!!!!!!!!!开发调试!!!!!!!!!!!!!!!!!!!!!!!
+		if(map==null){
+			map=new HashMap<String,Object>();
+
+			map.put("userId", userId);
+			if("yangsy".equals(userId)){
+				map.put("cityId", "999");
+			}else {
+				map.put("cityId", "3");
+			}
+		}
 		return map;
 	}
 
