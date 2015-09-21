@@ -70,8 +70,12 @@ public class UploadServiceImpl implements IUploadService{
 		try {
 			conn=DataBaseJdbc.get134DB2Connection();
 			conn.setAutoCommit(false);
-			String createSql="CREATE TABLE AIAPP."+tableName+"  (CITY_ID  VARCHAR(12) ,PHONE_NO VARCHAR(15) ) " +
-			 			     "COMPRESS YES  DISTRIBUTE BY HASH(PHONE_NO)   IN TBS_DW ";
+			//online
+//			String createSql="CREATE TABLE AIAPP."+tableName+"  (CITY_ID  VARCHAR(12) ,PHONE_NO VARCHAR(50) ) " +
+//			 			     "COMPRESS YES  DISTRIBUTE BY HASH(PHONE_NO)   IN TBS_DM ";
+			//test
+			String createSql="CREATE TABLE AIAPP."+tableName+"  (CITY_ID  VARCHAR(12) ,PHONE_NO VARCHAR(50) ) " +
+	 			     "COMPRESS YES  DISTRIBUTE BY HASH(PHONE_NO)    ";
 			System.out.println("createSql:"+createSql);
 			Statement s= conn.createStatement();
 			s.executeUpdate(createSql);
@@ -79,7 +83,8 @@ public class UploadServiceImpl implements IUploadService{
 			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			log.error("创建表134 aiapp.active_code 表出错："+e.getMessage());
 		}finally{
 			try {
 				if (conn!=null && !conn.isClosed())
@@ -127,6 +132,7 @@ public class UploadServiceImpl implements IUploadService{
 			conn=DataBaseJdbc.get134DB2Connection();
 			System.out.println("insertGroupBatch===>conn:"+conn);
 			conn.setAutoCommit(false);
+		//	int count =1;
 			String sql="insert into aiapp."+tableName+"(city_id,phone_no) values(?,?)";
 			PreparedStatement prest = conn.prepareStatement(sql,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			for(int i = 0; i < phoneList.size(); i++){
@@ -134,17 +140,26 @@ public class UploadServiceImpl implements IUploadService{
                 prest.setString(1, city_id);
                 prest.setString(2, phone_no);
                 prest.addBatch();
+//                if(i>0){
+//                	if(i%2000==0){
+//                		count++;
+//                		 System.out.println("count "+count);
+//                		 prest.executeBatch();
+//                		 conn.commit();
+//                	}
+//                }
              }
 			int[] i=prest.executeBatch();
-			System.out.println("自定义上传用户群插入数据库返回值 num："+i[0]+" ,int [] size="+i.length);
+	     	System.out.println("自定义上传用户群插入数据库返回值 num："+i[0]+" ,int [] size="+i.length);
 			System.out.println("phoneList.size()num："+phoneList.size());
-			for (int j : i) {
-				System.out.println("i="+j);
-			}
+//			for (int j : i) {
+//				System.out.println("i="+j);
+//			}
             conn.commit();
             conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			log.error("插入134数据库active_code表错误："+e.getMessage());
 			e.printStackTrace();
 		}finally{
 			try {
